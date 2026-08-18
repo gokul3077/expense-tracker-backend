@@ -84,6 +84,10 @@ expensesRouter.post('/', async (req, res) => {
     return;
   }
 
+  await supabase
+    .from('household_users')
+    .upsert({ name: parsed.data.createdBy.trim() }, { onConflict: 'name' });
+
   res.status(201).json(toExpense(data as ExpenseRow));
 });
 

@@ -21,6 +21,16 @@ create index if not exists expenses_date_idx on expenses (expense_date desc);
 create index if not exists expenses_category_idx on expenses (category_id);
 create index if not exists expenses_created_by_idx on expenses (created_by);
 
+create table if not exists household_users (
+  name text primary key,
+  created_at timestamptz not null default now()
+);
+
+insert into household_users (name)
+select distinct created_by from expenses
+where created_by is not null and created_by <> ''
+on conflict (name) do nothing;
+
 insert into categories (id, name, color) values
   ('cat-food', 'Food', '#D4652F'),
   ('cat-groceries', 'Groceries', '#1B6B4F'),

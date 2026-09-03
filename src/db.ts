@@ -34,7 +34,7 @@ export function toExpense(row: ExpenseRow) {
     amount: Number(row.amount),
     categoryId: row.category_id,
     description: row.description ?? '',
-    expenseDate: row.expense_date,
+    expenseDate: String(row.expense_date).slice(0, 10),
     createdBy: row.created_by,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

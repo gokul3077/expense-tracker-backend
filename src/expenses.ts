@@ -26,7 +26,11 @@ expensesRouter.get('/', async (req, res) => {
   const categoryId = typeof req.query.categoryId === 'string' ? req.query.categoryId : '';
   const month = typeof req.query.month === 'string' ? req.query.month : '';
 
-  let query = supabase.from('expenses').select('*').order('expense_date', { ascending: false });
+  let query = supabase
+    .from('expenses')
+    .select('*')
+    .order('expense_date', { ascending: false })
+    .order('created_at', { ascending: false });
 
   if (categoryId) {
     query = query.eq('category_id', categoryId);

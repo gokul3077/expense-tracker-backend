@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import { monthBounds } from './dates.js';
 import { supabase, toExpense, type ExpenseRow } from './db.js';
 
 export const expensesRouter = Router();
@@ -31,7 +32,8 @@ expensesRouter.get('/', async (req, res) => {
     query = query.eq('category_id', categoryId);
   }
   if (month) {
-    query = query.gte('expense_date', `${month}-01`).lte('expense_date', `${month}-31`);
+    const { from, to } = monthBounds(month);
+    query = query.gte('expense_date', from).lte('expense_date', to);
   }
   if (search) {
     query = query.ilike('description', `%${search}%`);

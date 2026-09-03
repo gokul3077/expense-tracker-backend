@@ -1,11 +1,8 @@
 import { Router } from 'express';
+import { monthBounds } from './dates.js';
 import { supabase, type ExpenseRow } from './db.js';
 
 export const reportsRouter = Router();
-
-function monthRange(month: string) {
-  return { from: `${month}-01`, to: `${month}-31` };
-}
 
 function currentMonthKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -25,7 +22,7 @@ function shortMonthLabel(monthKey: string) {
 }
 
 async function expensesInMonth(month: string): Promise<ExpenseRow[]> {
-  const { from, to } = monthRange(month);
+  const { from, to } = monthBounds(month);
   const { data, error } = await supabase
     .from('expenses')
     .select('*')
@@ -106,8 +103,8 @@ reportsRouter.get('/by-user', async (req, res) => {
 reportsRouter.get('/monthly-trend', async (_req, res) => {
   try {
     const months = lastNMonths(6);
-    const from = `${months[0]}-01`;
-    const to = `${months[months.length - 1]}-31`;
+    const from = monthBounds(months[0]).from;
+    const to = monthBounds(months[months.length - 1]).to;
     const { data, error } = await supabase
       .from('expenses')
       .select('amount, expense_date')
